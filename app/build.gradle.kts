@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kapt) // <-- using alias instead of id("org.jetbrains.kotlin.kapt")
-
 }
 
 android {
@@ -50,7 +48,8 @@ dependencies {
     // Room
     val roomVersion = "2.6.0"
     implementation("androidx.room:room-runtime:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion") // <- use this instead of kapt
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
