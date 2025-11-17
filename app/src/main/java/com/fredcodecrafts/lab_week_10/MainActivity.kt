@@ -3,12 +3,15 @@ package com.fredcodecrafts.lab_week_10
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.fredcodecrafts.lab_week_10.database.Total
 import com.fredcodecrafts.lab_week_10.database.TotalDatabase
+import com.fredcodecrafts.lab_week_10.database.TotalObject
 import com.fredcodecrafts.lab_week_10.viewmodels.TotalViewModel
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,8 +31,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeValueFromDatabase() {
         val totalList = db.totalDao().getTotal(ID)
-        if (totalList.isEmpty()) db.totalDao().insert(Total(id = 1, total = 0))
-        else viewModel.setTotal(totalList.first().total)
+        if (totalList.isEmpty())
+            db.totalDao().insert(Total(id = 1, total = TotalObject(0, Date().toString())))
+        else
+            viewModel.setTotal(totalList.first().total.value)
     }
 
     private fun updateText(total: Int) {
@@ -44,7 +49,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        db.totalDao().update(Total(ID, viewModel.total.value!!))
+        val timestamp = Date().toString()
+        db.totalDao().update(Total(ID, TotalObject(viewModel.total.value!!, timestamp)))
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val total = db.totalDao().getTotal(ID).first()
+        Toast.makeText(this, "Last updated: ${total.total.date}", Toast.LENGTH_SHORT).show()
     }
 
     companion object { const val ID: Long = 1 }
