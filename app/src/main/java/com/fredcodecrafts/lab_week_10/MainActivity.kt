@@ -1,18 +1,16 @@
 package com.fredcodecrafts.lab_week_10
 
 
-
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.fredcodecrafts.lab_week_10.viewmodels.TotalViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[TotalViewModel::class.java]
-    }
+    private val viewModel by lazy { ViewModelProvider(this)[TotalViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,11 +24,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun prepareViewModel() {
-        // Observe total from ViewModel
-        updateText(viewModel.total) // first update
+        viewModel.total.observe(this) { total ->
+            updateText(total)
+        }
+
         findViewById<Button>(R.id.button_increment).setOnClickListener {
             viewModel.incrementTotal()
-            updateText(viewModel.total)
         }
     }
 }
